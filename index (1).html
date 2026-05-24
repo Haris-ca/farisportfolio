@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faris Ca, CMA — Finance Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #05101f;
+    --navy2: #0a1a30;
+    --navy3: #0f2340;
+    --gold: #c9a84c;
+    --gold2: #e8c96a;
+    --gold3: #f5e0a0;
+    --teal: #00c2a8;
+    --teal2: #00e5c6;
+    --red: #e05252;
+    --green: #3ecf8e;
+    --text: #d8e4f0;
+    --text-dim: #7a9ab8;
+    --border: rgba(201,168,76,0.18);
+    --glass: rgba(255,255,255,0.03);
+    --radius: 14px;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.2s, height 0.2s;
+    opacity: 0.5;
+  }
+
+  /* Ticker tape */
+  .ticker-wrap {
+    background: var(--gold);
+    overflow: hidden;
+    padding: 6px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .ticker {
+    display: flex;
+    gap: 0;
+    animation: ticker-scroll 40s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+  .ticker span {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    padding: 0 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .tick-up { color: #1a7a50; }
+  .tick-dn { color: #8b1a1a; }
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    background: rgba(5,16,31,0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 10px 28px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  nav a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--gold2); }
+  nav .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--gold);
+    margin-right: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 80px;
+  }
+
+  #hero-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 1.5px;
+    background: var(--teal);
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 7vw, 92px);
+    font-weight: 900;
+    line-height: 1.0;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .hero-name .gold { color: var(--gold); }
+
+  .hero-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--gold2);
+    letter-spacing: 0.15em;
+    margin-bottom: 22px;
+    text-transform: uppercase;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 36px;
+  }
+
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: var(--navy);
+    border: none;
+    padding: 13px 28px;
+    border-radius: 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 0 24px rgba(201,168,76,0.3);
+  }
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 36px rgba(201,168,76,0.5);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    padding: 13px 28px;
+    border-radius: 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.18s, color 0.18s;
+  }
+  .btn-outline:hover {
+    background: rgba(201,168,76,0.1);
+    color: var(--gold2);
+  }
+
+  /* Profile card */
+  .hero-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    animation: floatCard 6s ease-in-out infinite;
+  }
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-12px); }
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .profile-img-wrap {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy3), var(--navy2));
+    border: 2.5px solid var(--gold);
+    margin: 0 auto 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 32px rgba(201,168,76,0.25);
+  }
+  .profile-initials {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .card-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-pill {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-pill .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-pill .lbl {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    display: block;
+  }
+
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  .badge {
+    background: rgba(0,194,168,0.1);
+    border: 1px solid rgba(0,194,168,0.3);
+    color: var(--teal2);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ===== SECTIONS ===== */
+  section { padding: 110px 0; }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--teal);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px; height: 1.5px;
+    background: var(--teal);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .section-title .gold { color: var(--gold); }
+
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 56px;
+  }
+
+  /* ===== STATS BAR ===== */
+  #stats {
+    padding: 0;
+    background: var(--navy2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .stats-item {
+    padding: 44px 24px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .stats-item:last-child { border-right: none; }
+  .stats-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 2px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .stats-item:hover::after { width: 100%; }
+  .stats-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stats-num .unit {
+    font-size: 28px;
+    color: var(--gold2);
+  }
+  .stats-lbl {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ===== EXPERIENCE ===== */
+  #experience { background: var(--navy); }
+
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1.5px;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--teal) 50%, transparent 100%);
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 52px;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .tl-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -38px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--navy);
+    box-shadow: 0 0 12px rgba(201,168,76,0.6);
+  }
+
+  .tl-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .tl-role {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .tl-company {
+    font-size: 14px;
+    color: var(--gold2);
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tl-company .loc {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .tl-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .tl-card:hover {
+    border-color: rgba(201,168,76,0.4);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+
+  .tl-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tl-list li {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tl-list li::before {
+    content: '▸';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 11px;
+  }
+
+  /* ===== SKILLS ===== */
+  #skills { background: var(--navy2); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 44px;
+  }
+
+  .skill-group-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 22px;
+  }
+
+  .skill-bar-wrap { margin-bottom: 18px; }
+  .skill-bar-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+  }
+  .skill-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .skill-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--gold2);
+  }
+  .skill-track {
+    height: 5px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .skill-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Tags cloud */
+  .tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .tag {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .tag:hover {
+    background: rgba(201,168,76,0.14);
+    color: var(--gold2);
+    border-color: var(--gold);
+  }
+
+  /* ===== EDUCATION ===== */
+  #education { background: var(--navy); }
+
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .edu-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .edu-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .edu-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    border-color: rgba(201,168,76,0.4);
+  }
+  .edu-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--teal));
+  }
+  .edu-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+  .edu-degree {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .edu-inst {
+    font-size: 12px;
+    color: var(--gold2);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .edu-detail {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ===== CERTIFICATIONS ===== */
+  #certifications { background: var(--navy2); }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .cert-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .cert-card:hover {
+    border-color: rgba(0,194,168,0.4);
+    transform: translateX(4px);
+  }
+  .cert-icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: rgba(0,194,168,0.1);
+    border: 1px solid rgba(0,194,168,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .cert-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+  .cert-org {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .cert-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+
+  /* ===== AWARDS ===== */
+  #awards { background: var(--navy); }
+
+  .awards-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .award-item {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .award-item:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.04);
+  }
+  .award-icon { font-size: 26px; }
+  .award-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ===== LANGUAGES ===== */
+  #languages { background: var(--navy2); }
+  .lang-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .lang-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 30px;
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .lang-card:hover {
+    border-color: rgba(201,168,76,0.4);
+    transform: translateY(-4px);
+  }
+  .lang-flag { font-size: 30px; margin-bottom: 8px; }
+  .lang-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .lang-level {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ===== CONTACT ===== */
+  #contact {
+    background: var(--navy);
+    padding-bottom: 80px;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .contact-info { display: flex; flex-direction: column; gap: 20px; }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .contact-item:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.04);
+  }
+  .contact-item-icon {
+    font-size: 22px;
+    width: 40px;
+    text-align: center;
+  }
+  .contact-item-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 3px;
+    font-family: 'Space Mono', monospace;
+  }
+  .contact-item-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold2);
+  }
+
+  .contact-quote {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(0,194,168,0.06));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-quote::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 160px;
+    color: rgba(201,168,76,0.07);
+    position: absolute;
+    top: -20px; left: 10px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .quote-attr {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--navy2);
+    border-top: 1px solid var(--border);
+    padding: 28px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  footer .copy {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* scroll reveal */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .hero-grid, .skills-grid, .contact-grid { grid-template-columns: 1fr; }
+    .edu-grid, .cert-grid { grid-template-columns: 1fr 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    nav { gap: 16px; padding: 8px 18px; }
+    nav a { font-size: 11px; }
+    .hero-card { order: -1; }
+  }
+  @media (max-width: 600px) {
+    .edu-grid, .cert-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .container { padding: 0 20px; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Ticker tape -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <span>CMA USA <span class="tick-up">▲</span> 420/500 Part I</span>
+    <span>ACCA <span class="tick-up">▲</span> 6/13 Papers</span>
+    <span>IFRS Certified <span class="tick-up">●</span></span>
+    <span>UAE VAT Expert <span class="tick-up">▲</span></span>
+    <span>SAP FICO S4 HANA <span class="tick-up">●</span></span>
+    <span>Power BI <span class="tick-up">▲</span></span>
+    <span>UAE Corporate Tax <span class="tick-up">●</span></span>
+    <span>Financial Modelling <span class="tick-up">▲</span></span>
+    <span>CGPA 9.0/10 <span class="tick-up">▲</span></span>
+    <span>KSA VAT &amp; ZAKAT <span class="tick-up">●</span></span>
+    <span>47 Branches Managed <span class="tick-up">▲</span></span>
+    <span>DCF &amp; Valuation <span class="tick-up">●</span></span>
+    <!-- duplicate for infinite loop -->
+    <span>CMA USA <span class="tick-up">▲</span> 420/500 Part I</span>
+    <span>ACCA <span class="tick-up">▲</span> 6/13 Papers</span>
+    <span>IFRS Certified <span class="tick-up">●</span></span>
+    <span>UAE VAT Expert <span class="tick-up">▲</span></span>
+    <span>SAP FICO S4 HANA <span class="tick-up">●</span></span>
+    <span>Power BI <span class="tick-up">▲</span></span>
+    <span>UAE Corporate Tax <span class="tick-up">●</span></span>
+    <span>Financial Modelling <span class="tick-up">▲</span></span>
+    <span>CGPA 9.0/10 <span class="tick-up">▲</span></span>
+    <span>KSA VAT &amp; ZAKAT <span class="tick-up">●</span></span>
+    <span>47 Branches Managed <span class="tick-up">▲</span></span>
+    <span>DCF &amp; Valuation <span class="tick-up">●</span></span>
+  </div>
+</div>
+
+<!-- Nav -->
+<nav>
+  <span class="nav-logo">FC</span>
+  <a href="#about">About</a>
+  <a href="#experience">Experience</a>
+  <a href="#skills">Skills</a>
+  <a href="#education">Education</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid" id="about">
+    <div>
+      <div class="hero-label">Certified Management Accountant</div>
+      <h1 class="hero-name">Faris <span class="gold">Ca</span></h1>
+      <div class="hero-title">CMA USA · ACCA (Pursuing) · General Accountant</div>
+      <p class="hero-desc">
+        Finance professional with expertise in end-to-end accounting, IFRS reporting, SAP FICO, and strategic financial management. Based in Dubai, UAE — delivering clarity from complexity.
+      </p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-gold">Hire Me</a>
+        <a href="#experience" class="btn-outline">View Experience</a>
+      </div>
+    </div>
+    <div>
+      <div class="hero-card">
+        <div class="profile-img-wrap">
+          <!-- Replace src below with your actual photo -->
+          <span class="profile-initials">FC</span>
+        </div>
+        <div class="card-name">Faris Ca, CMA</div>
+        <div class="card-role">General Accountant · Dubai, UAE</div>
+        <div class="card-stats">
+          <div class="stat-pill">
+            <span class="num" data-count="3">0</span>
+            <span class="lbl">Years Exp</span>
+          </div>
+          <div class="stat-pill">
+            <span class="num" data-count="47">0</span>
+            <span class="lbl">Branches</span>
+          </div>
+          <div class="stat-pill">
+            <span class="num" data-count="6">0</span>
+            <span class="lbl">ACCA Papers</span>
+          </div>
+          <div class="stat-pill">
+            <span class="num" data-count="9">0</span>
+            <span class="lbl">CGPA/10</span>
+          </div>
+        </div>
+        <div class="card-badges">
+          <span class="badge">CMA USA</span>
+          <span class="badge">ACCA</span>
+          <span class="badge">IFRS</span>
+          <span class="badge">SAP FICO</span>
+          <span class="badge">Power BI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS BAR ===== -->
+<div id="stats">
+  <div class="stats-row">
+    <div class="stats-item">
+      <span class="stats-num"><span class="counter" data-target="420">0</span><span class="unit">/500</span></span>
+      <span class="stats-lbl">CMA Part I Score</span>
+    </div>
+    <div class="stats-item">
+      <span class="stats-num"><span class="counter" data-target="430">0</span><span class="unit">/500</span></span>
+      <span class="stats-lbl">CMA Part II Score</span>
+    </div>
+    <div class="stats-item">
+      <span class="stats-num"><span class="counter" data-target="9">0</span><span class="unit">/10</span></span>
+      <span class="stats-lbl">Bachelor's CGPA</span>
+    </div>
+    <div class="stats-item">
+      <span class="stats-num"><span class="counter" data-target="6">0</span><span class="unit">+</span></span>
+      <span class="stats-lbl">Certifications</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EXPERIENCE ===== -->
+<section id="experience">
+  <div class="container">
+    <div class="section-label">Career Timeline</div>
+    <h2 class="section-title">Work <span class="gold">Experience</span></h2>
+    <div class="divider"></div>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-date">April 2025 — Present</div>
+        <div class="tl-role">General Accountant</div>
+        <div class="tl-company">
+          Al Waleed Group
+          <span class="loc">📍 Dubai, UAE</span>
+        </div>
+        <div class="tl-card">
+          <ul class="tl-list">
+            <li>Managed end-to-end accounting for a real estate group with security and facility management subsidiaries</li>
+            <li>Handled accounts receivable, accounts payable, general ledger postings, and day-to-day accounting operations</li>
+            <li>Prepared monthly MIS reports and comprehensive financial statements</li>
+            <li>Performed inter-company & vendor reconciliations to ensure accurate group reporting</li>
+            <li>Coordinated with operations and management to support billing, collections, and cost control</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">January 2024 — December 2024</div>
+        <div class="tl-role">Accountant</div>
+        <div class="tl-company">
+          Manna Glass Company
+          <span class="loc">📍 Riyadh, KSA</span>
+        </div>
+        <div class="tl-card">
+          <ul class="tl-list">
+            <li>Directed and optimized centralized accounts payable operations, ensuring accurate and efficient processing for 47 branches</li>
+            <li>Reconciled business partners, intercompany and other monetary and non-monetary accounts to verify accuracy</li>
+            <li>Analyzed financial statements to identify variances in major components between financial periods</li>
+            <li>Performed month-end close activities including closing JE postings for internal and intercompany transactions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">September 2020 — July 2022</div>
+        <div class="tl-role">Accounting Intern</div>
+        <div class="tl-company">
+          MK Associates
+          <span class="loc">📍 India</span>
+        </div>
+        <div class="tl-card">
+          <ul class="tl-list">
+            <li>Maintained financial records and prepared financial statements</li>
+            <li>Prepared books of accounts and assisted with month-end closing activities and reconciliation</li>
+            <li>Assisted in preparation of tax returns and audit processes</li>
+            <li>Analyzed financial data and presented findings to senior management</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== SKILLS ===== -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label">Competencies</div>
+    <h2 class="section-title">Skills &amp; <span class="gold">Expertise</span></h2>
+    <div class="divider"></div>
+    <div class="skills-grid">
+      <div>
+        <div class="skill-group-title">Core Financial Skills</div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">Financial Reporting & IFRS</span><span class="skill-pct">95%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="95"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">Accounts Payable / Receivable</span><span class="skill-pct">92%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="92"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">Month-End Close & MIS</span><span class="skill-pct">90%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="90"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">Budgeting & Cost Management</span><span class="skill-pct">85%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="85"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">Financial Modelling & DCF</span><span class="skill-pct">80%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="80"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Technology & Tax</div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">SAP FICO S4 HANA</span><span class="skill-pct">88%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="88"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">Power BI</span><span class="skill-pct">82%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="82"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">UAE VAT & Corporate Tax</span><span class="skill-pct">90%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="90"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">KSA VAT, ZAKAT</span><span class="skill-pct">78%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="78"></div></div>
+        </div>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-top"><span class="skill-name">US GAAP</span><span class="skill-pct">75%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="75"></div></div>
+        </div>
+        <div class="tags-wrap" id="techTags">
+          <span class="tag">Reconciliations</span>
+          <span class="tag">GL Postings</span>
+          <span class="tag">MIS Reports</span>
+          <span class="tag">Tax Returns</span>
+          <span class="tag">Variance Analysis</span>
+          <span class="tag">Internal Audit</span>
+          <span class="tag">Intercompany</span>
+          <span class="tag">ERP</span>
+          <span class="tag">Excel Advanced</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EDUCATION ===== -->
+<section id="education">
+  <div class="container">
+    <div class="section-label">Academic Background</div>
+    <h2 class="section-title">Education &amp; <span class="gold">Qualifications</span></h2>
+    <div class="divider"></div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-icon">📊</div>
+        <div class="edu-degree">ACCA — Association of Chartered Certified Accountants</div>
+        <div class="edu-inst">ACCA Global · Pursuing</div>
+        <div class="edu-detail">6 of 13 papers completed. Financial Reporting cleared with 76/100. Actively pursuing remaining papers.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-icon">🏅</div>
+        <div class="edu-degree">Certified Management Accountant (CMA USA)</div>
+        <div class="edu-inst">IMA USA · Awaiting License</div>
+        <div class="edu-detail">Part 1 — Financial Planning, Performance & Analytics: <strong>420/500</strong><br>Part 2 — Strategic Financial Management: <strong>430/500</strong></div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-icon">🎓</div>
+        <div class="edu-degree">Bachelor of Commerce</div>
+        <div class="edu-inst">Mangalore University · Class of 2023</div>
+        <div class="edu-detail">Graduated with exceptional academic performance. CGPA: <strong>9.0 / 10.0</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CERTIFICATIONS ===== -->
+<section id="certifications">
+  <div class="container">
+    <div class="section-label">Professional Development</div>
+    <h2 class="section-title">Certifi<span class="gold">cations</span></h2>
+    <div class="divider"></div>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="cert-icon">🇦🇪</div>
+        <div>
+          <div class="cert-name">UAE VAT Certificate</div>
+          <div class="cert-org">Udemy</div>
+          <div class="cert-date">April 2025</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🏢</div>
+        <div>
+          <div class="cert-name">UAE Corporate Tax Certificate</div>
+          <div class="cert-org">Udemy</div>
+          <div class="cert-date">April 2025</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">📋</div>
+        <div>
+          <div class="cert-name">IFRS Certificate</div>
+          <div class="cert-org">Grant Thornton India</div>
+          <div class="cert-date">March 2025</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">📈</div>
+        <div>
+          <div class="cert-name">Power BI Certificate</div>
+          <div class="cert-org">Grant Thornton India</div>
+          <div class="cert-date">March 2025</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">⚙️</div>
+        <div>
+          <div class="cert-name">SAP FICO S4 HANA</div>
+          <div class="cert-org">Beat Educations</div>
+          <div class="cert-date">Jun – Sep 2023</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">💻</div>
+        <div>
+          <div class="cert-name">Virtual Accounting Practice (ERP)</div>
+          <div class="cert-org">SAC Computer Academy</div>
+          <div class="cert-date">Oct 2021 – Jul 2022</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AWARDS ===== -->
+<section id="awards">
+  <div class="container">
+    <div class="section-label">Recognition</div>
+    <h2 class="section-title">Awards &amp; <span class="gold">Achievements</span></h2>
+    <div class="divider"></div>
+    <div class="awards-row">
+      <div class="award-item">
+        <div class="award-icon">🥇</div>
+        <div class="award-text">Winner of Finance Event at State Level Fest — PG Dept. of FMKMC College, Madikeri</div>
+      </div>
+      <div class="award-item">
+        <div class="award-icon">🏆</div>
+        <div class="award-text">Business Quiz Winner — Event conducted by PG Dept. of Commerce, Cauvery College</div>
+      </div>
+      <div class="award-item">
+        <div class="award-icon">⭐</div>
+        <div class="award-text">Best Performer in SAP FICO Training — Awarded by Beat Educations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LANGUAGES ===== -->
+<section id="languages">
+  <div class="container">
+    <div class="section-label">Communication</div>
+    <h2 class="section-title">Lang<span class="gold">uages</span></h2>
+    <div class="divider"></div>
+    <div class="lang-grid">
+      <div class="lang-card"><div class="lang-flag">🇬🇧</div><div class="lang-name">English</div><div class="lang-level">Professional</div></div>
+      <div class="lang-card"><div class="lang-flag">🇮🇳</div><div class="lang-name">Hindi</div><div class="lang-level">Fluent</div></div>
+      <div class="lang-card"><div class="lang-flag">🇮🇳</div><div class="lang-name">Kannada</div><div class="lang-level">Native</div></div>
+      <div class="lang-card"><div class="lang-flag">🇮🇳</div><div class="lang-name">Malayalam</div><div class="lang-level">Fluent</div></div>
+      <div class="lang-card"><div class="lang-flag">🇮🇳</div><div class="lang-name">Tamil</div><div class="lang-level">Conversational</div></div>
+      <div class="lang-card"><div class="lang-flag">🇸🇦</div><div class="lang-name">Arabic</div><div class="lang-level">Working</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label">Get In Touch</div>
+    <h2 class="section-title">Let's <span class="gold">Connect</span></h2>
+    <div class="divider"></div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <a href="tel:+971508843801" class="contact-item">
+          <div class="contact-item-icon">📱</div>
+          <div>
+            <div class="contact-item-label">Phone / WhatsApp</div>
+            <div class="contact-item-val">+971 50 884 3801</div>
+          </div>
+        </a>
+        <a href="mailto:fariscacma@gmail.com" class="contact-item">
+          <div class="contact-item-icon">✉️</div>
+          <div>
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-val">fariscacma@gmail.com</div>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/farisca01" target="_blank" class="contact-item">
+          <div class="contact-item-icon">💼</div>
+          <div>
+            <div class="contact-item-label">LinkedIn</div>
+            <div class="contact-item-val">linkedin.com/in/farisca01</div>
+          </div>
+        </a>
+        <div class="contact-item">
+          <div class="contact-item-icon">📍</div>
+          <div>
+            <div class="contact-item-label">Location</div>
+            <div class="contact-item-val">Dubai, UAE</div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-quote">
+        <div class="quote-text">Numbers tell stories. I make sure those stories are accurate, insightful, and drive better decisions.</div>
+        <div class="quote-attr">— Faris Ca, CMA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Faris Ca · CMA</div>
+  <div class="copy">Certified Management Accountant · Dubai, UAE · © 2025</div>
+</footer>
+
+<script>
+// =================== Custom Cursor ===================
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function anim() {
+  rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  ring.style.left  = rx + 'px'; ring.style.top  = ry + 'px';
+  requestAnimationFrame(anim);
+})();
+document.querySelectorAll('a, button, .tag, .cert-card, .lang-card, .award-item').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; ring.style.width = '56px'; ring.style.height = '56px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; ring.style.width = '36px'; ring.style.height = '36px'; });
+});
+
+// =================== Hero Canvas (candlestick chart) ===================
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const candles = [];
+let t = 0;
+function genCandle(x, prevClose) {
+  const open = prevClose + (Math.random() - 0.5) * 18;
+  const close = open + (Math.random() - 0.5) * 28;
+  const high = Math.max(open, close) + Math.random() * 14;
+  const low = Math.min(open, close) - Math.random() * 14;
+  return { x, open, close, high, low };
+}
+let prevC = 240;
+for (let i = 0; i < 80; i++) {
+  const c = genCandle(i * 22, prevC);
+  prevC = c.close;
+  candles.push(c);
+}
+
+function drawChart() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const cw = canvas.width, ch = canvas.height;
+
+  // Gradient bg overlay
+  const bg = ctx.createLinearGradient(0, 0, 0, ch);
+  bg.addColorStop(0, 'rgba(5,16,31,0)');
+  bg.addColorStop(1, 'rgba(5,16,31,0.7)');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, cw, ch);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(201,168,76,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 10; i++) {
+    ctx.beginPath();
+    ctx.moveTo(0, ch * i / 10);
+    ctx.lineTo(cw, ch * i / 10);
+    ctx.stroke();
+  }
+  for (let i = 0; i < 20; i++) {
+    ctx.beginPath();
+    ctx.moveTo(cw * i / 20, 0);
+    ctx.lineTo(cw * i / 20, ch);
+    ctx.stroke();
+  }
+
+  // Scrolling candles
+  const scale = ch * 0.0012;
+  const yBase = ch * 0.72;
+  const xOff = (t * 0.3) % 22;
+  const candleW = 10;
+
+  candles.forEach((c, i) => {
+    const x = c.x * (cw / 1760) * 22 - xOff + 40;
+    if (x < -30 || x > cw + 30) return;
+
+    const bull = c.close >= c.open;
+    const color = bull ? '#3ecf8e' : '#e05252';
+    const y1 = yBase - (Math.max(c.open, c.close) - 200) * scale * 6;
+    const y2 = yBase - (Math.min(c.open, c.close) - 200) * scale * 6;
+    const yH = yBase - (c.high - 200) * scale * 6;
+    const yL = yBase - (c.low - 200) * scale * 6;
+    const alpha = 0.22 + Math.min(0.38, Math.abs(x - cw / 2) / cw * 0.5);
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = bull ? color : color;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = 1;
+
+    // Wick
+    ctx.beginPath();
+    ctx.moveTo(x + candleW / 2, yH);
+    ctx.lineTo(x + candleW / 2, yL);
+    ctx.stroke();
+
+    // Body
+    const bodyH = Math.max(2, Math.abs(y2 - y1));
+    ctx.fillRect(x, y1, candleW, bodyH);
+    ctx.globalAlpha = 1;
+  });
+
+  // Glow line (moving average)
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(201,168,76,0.18)';
+  ctx.lineWidth = 2;
+  candles.forEach((c, i) => {
+    const x = c.x * (cw / 1760) * 22 - xOff + 40;
+    const y = yBase - (c.close - 200) * scale * 6;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  t++;
+  requestAnimationFrame(drawChart);
+}
+drawChart();
+
+// =================== Counter Animation ===================
+function animateCounters(els) {
+  els.forEach(el => {
+    const target = +el.dataset.target || +el.dataset.count;
+    const duration = 1600;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+// =================== Intersection Observer ===================
+const ioCounter = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCounters(e.target.querySelectorAll('.counter, [data-count]'));
+      ioCounter.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('#stats, .hero-card').forEach(el => ioCounter.observe(el));
+
+const ioReveal = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.tl-item, .edu-card').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.12) + 's';
+  ioReveal.observe(el);
+});
+
+// =================== Skill bars ===================
+const ioSkills = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-fill').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+      });
+      ioSkills.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('#skills').forEach(el => ioSkills.observe(el));
+
+// =================== Reveal on scroll ===================
+const ioGen = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => ioGen.observe(el));
+</script>
+</body>
+</html>
